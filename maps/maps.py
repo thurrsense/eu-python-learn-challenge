@@ -1,31 +1,31 @@
 from typing import Union
-
+from functools import reduce
 
 class MapExercise:
     @staticmethod
+    def get_valid_movie(movie: dict):
+        rate = movie.get('rating_kinopoisk')
+        num_of_countries = len(movie.get('country').split(','))
+        if (num_of_countries >= 2) and (rate != '0' and rate != ''):
+            return movie
+        
+    @staticmethod
     def rating(list_of_movies: list[dict]) -> float:
-        """
-        !!Задание нужно решить используя map!!
-        Посчитать средний рейтинг фильмов (rating_kinopoisk) у которых две или больше стран.
-        Фильмы у которых рейтинг не задан или равен 0 не учитывать в расчете среднего.
-
-        :param list_of_movies: Список фильмов.
-        Ключи словаря: name, rating_kinopoisk, rating_imdb, genres, year, access_level, country
-        :return: Средний рейтинг фильмов у которых две или больше стран
-        """
-        pass
-
+        valid_movies = list(filter(MapExercise.get_valid_movie, list_of_movies)) 
+        ratings = list(map(lambda movie: float(movie['rating_kinopoisk']), valid_movies))
+        total_rate = sum(ratings)
+        total_amount = len(ratings)
+        average_rate = total_rate / total_amount
+        return average_rate
+    
     @staticmethod
     def chars_count(list_of_movies: list[dict], rating: Union[float, int]) -> int:
-        """
-        !!Задание нужно решить используя map!!
-        Посчитать количество букв 'и' в названиях всех фильмов с рейтингом (rating_kinopoisk) больше
-        или равным заданному значению
-
-        :param list_of_movies: Список фильмов
-        Ключи словаря: name, rating_kinopoisk, rating_imdb, genres, year, access_level, country
-        :param rating: Заданный рейтинг
-        :return: Количество букв 'и' в названиях всех фильмов с рейтингом больше
-        или равным заданному значению
-        """
-        pass
+        
+        def count_char_in_name(movie: dict):
+            movie_rate = movie['rating_kinopoisk']
+            if movie_rate != '' and float(movie_rate) >= rating:
+                return movie['name'].count('и') 
+                
+        filtered_movies = filter(None, map(count_char_in_name, list_of_movies))
+        return sum(filtered_movies)
+        
